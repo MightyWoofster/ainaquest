@@ -4,6 +4,8 @@
    - Resource effects + set bonuses: stubbed (add later)
 */
 
+const CARD_BACK = "assets/backs/back.png";
+
 const SCREENS = {
   setup: document.getElementById('screen-setup'),
   gate: document.getElementById('screen-gate'),
@@ -199,7 +201,7 @@ function renderHand(){
     tile.className = `cardtile ${cardTypeClass(card)}`;
     tile.dataset.instanceId = card.instanceId;
 
-    const imgSrc = card.image ?? '';
+    const imgSrc = card.front ?? '';
     tile.innerHTML = `
       <div class="cardpoints">${Number(card.points ?? 0)}</div>
       <img class="cardimg" alt="${card.name}" src="${imgSrc}" onerror="this.style.display='none'">
@@ -259,7 +261,7 @@ function showHuli(){
       <div style="padding:10px">
         <div class="cardtile ${cardTypeClass(card)}" style="cursor:default">
           <div class="cardpoints">${Number(card.points ?? 0)}</div>
-          <img class="cardimg" alt="${card.name}" src="${card.image ?? ''}" onerror="this.style.display='none'">
+          <img class="cardimg" alt="${card.name}" src="${card.front ?? ''}" onerror="this.style.display='none'">
           <div class="cardmeta">
             <div class="cardname">${card.name}</div>
             <div class="cardtype">${card.type}</div>
