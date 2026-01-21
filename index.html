@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ʻĀinaQuest (Hot-seat MVP)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <h1>ʻĀinaQuest</h1>
+      <p class="subtitle">Hot-seat prototype (2–6 players) • 3 rounds • Plant → Huli! → Pass</p>
+    </div>
+    <div class="header-actions">
+      <button id="btn-reset" class="btn btn-ghost" title="Reset game">Reset</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- SETUP -->
+    <section id="screen-setup" class="card">
+      <h2>Set up players</h2>
+      <p class="muted">Enter 2–6 player names. This version is “pass-the-device.”</p>
+
+      <div class="row">
+        <label class="label">Number of players</label>
+        <select id="player-count">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4" selected>4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+
+      <div id="player-inputs" class="player-inputs"></div>
+
+      <div class="actions">
+        <button id="btn-start" class="btn btn-primary">Start game</button>
+      </div>
+
+      <details class="notes">
+        <summary>What’s implemented?</summary>
+        <ul>
+          <li>3 rounds. Deal 9 cards per player each round.</li>
+          <li>Each turn: each player secretly chooses 1 card to plant face-down. Then <b>Huli!</b> reveals all planted cards and hands get passed.</li>
+          <li>End of round scoring: sums points for non-invasive, non-resource cards. Invasives are tracked across rounds and used for the -20 rule at the end.</li>
+          <li>Resource effects (Wai, Pākukui) and set bonuses are stubbed for later.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- PRIVACY GATE -->
+    <section id="screen-gate" class="card hidden">
+      <h2 id="gate-title">Pass to next player</h2>
+      <p class="muted" id="gate-subtitle">When you’re ready, tap reveal.</p>
+      <div class="actions">
+        <button id="btn-reveal" class="btn btn-primary">Reveal my hand</button>
+      </div>
+    </section>
+
+    <!-- CHOOSE CARD -->
+    <section id="screen-choose" class="card hidden">
+      <div class="split">
+        <div>
+          <h2 id="choose-title">Choose a card to plant</h2>
+          <p class="muted" id="choose-subtitle">Pick 1 card. It will be planted face-down for this turn.</p>
+        </div>
+        <div class="pillbar">
+          <span class="pill">Round <b id="ui-round">1</b>/3</span>
+          <span class="pill">Turn <b id="ui-turn">1</b>/9</span>
+        </div>
+      </div>
+
+      <div id="hand" class="hand"></div>
+
+      <div class="actions">
+        <button id="btn-plant" class="btn btn-primary" disabled>Plant selected</button>
+        <button id="btn-cancel" class="btn btn-ghost">Cancel</button>
+      </div>
+    </section>
+
+    <!-- HULI REVEAL -->
+    <section id="screen-huli" class="card hidden">
+      <h2>Huli!</h2>
+      <p class="muted">Everyone reveals their planted card.</p>
+
+      <div id="huli-grid" class="huli-grid"></div>
+
+      <div class="actions">
+        <button id="btn-next-turn" class="btn btn-primary">Continue</button>
+      </div>
+    </section>
+
+    <!-- ROUND SCORE -->
+    <section id="screen-roundscore" class="card hidden">
+      <h2>End of round</h2>
+      <p class="muted">Round scores (basic). Invasives are tracked for the final penalty.</p>
+      <div id="roundscore" class="scoreboard"></div>
+      <div class="actions">
+        <button id="btn-next-round" class="btn btn-primary">Next round</button>
+      </div>
+    </section>
+
+    <!-- FINAL -->
+    <section id="screen-final" class="card hidden">
+      <h2>Final results</h2>
+      <p class="muted">Includes -20 penalty for the player with the most invasives.</p>
+      <div id="finalscore" class="scoreboard"></div>
+      <div class="actions">
+        <button id="btn-play-again" class="btn btn-primary">Play again</button>
+      </div>
+    </section>
+
+    <!-- DEBUG / STATUS -->
+    <section class="footer card">
+      <div class="statusline">
+        <span id="status" class="muted">Ready.</span>
+        <span class="muted">•</span>
+        <span class="muted">Deck: <span id="decksize">–</span></span>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

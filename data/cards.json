@@ -1,0 +1,122 @@
+[
+  {
+    "id": "ohia",
+    "name": "ʻŌhiʻa Lehua",
+    "type": "native",
+    "points": 20,
+    "count": 12,
+    "image": ""
+  },
+  {
+    "id": "naupaka",
+    "name": "Naupaka",
+    "type": "native",
+    "points": 10,
+    "count": 12,
+    "image": ""
+  },
+  {
+    "id": "mamaki",
+    "name": "Māmaki",
+    "type": "native",
+    "points": 5,
+    "count": 12,
+    "image": ""
+  },
+  {
+    "id": "kupukupu",
+    "name": "Kupukupu",
+    "type": "native",
+    "points": 5,
+    "count": 12,
+    "image": ""
+  },
+  {
+    "id": "ilima",
+    "name": "ʻIlima",
+    "type": "native",
+    "points": 20,
+    "count": 8,
+    "image": ""
+  },
+  {
+    "id": "kalo",
+    "name": "Kalo",
+    "type": "canoe",
+    "points": 20,
+    "count": 10,
+    "image": ""
+  },
+  {
+    "id": "uala",
+    "name": "ʻUala",
+    "type": "canoe",
+    "points": 10,
+    "count": 10,
+    "image": ""
+  },
+  {
+    "id": "kukui",
+    "name": "Kukui",
+    "type": "canoe",
+    "points": 10,
+    "count": 10,
+    "image": ""
+  },
+  {
+    "id": "ulu",
+    "name": "ʻUlu",
+    "type": "canoe",
+    "points": 5,
+    "count": 12,
+    "image": ""
+  },
+  {
+    "id": "niu",
+    "name": "Niu",
+    "type": "canoe",
+    "points": 5,
+    "count": 12,
+    "image": ""
+  },
+  {
+    "id": "waiawi",
+    "name": "Waiawī",
+    "type": "invasive",
+    "points": 0,
+    "count": 10,
+    "image": ""
+  },
+  {
+    "id": "guineagrass",
+    "name": "Guinea Grass",
+    "type": "invasive",
+    "points": 0,
+    "count": 10,
+    "image": ""
+  },
+  {
+    "id": "gorillaogo",
+    "name": "Gorilla Ogo",
+    "type": "invasive",
+    "points": 0,
+    "count": 10,
+    "image": ""
+  },
+  {
+    "id": "wai",
+    "name": "Wai",
+    "type": "resource",
+    "points": 0,
+    "count": 4,
+    "image": ""
+  },
+  {
+    "id": "pakukui",
+    "name": "Pākukui",
+    "type": "resource",
+    "points": 0,
+    "count": 4,
+    "image": ""
+  }
+]
