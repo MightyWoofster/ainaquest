@@ -2,90 +2,90 @@
   {
     "id": "ohia",
     "name": "ʻŌhiʻa Lehua",
-    "type": "native",
+    "type": "Endemic",
     "points": 20,
-    "count": 12,
-    "image": ""
+    "count": 7,
+    "front": "assets/cards/00Ohia.png"
   },
   {
     "id": "naupaka",
     "name": "Naupaka",
-    "type": "native",
+    "type": "Endemic",
     "points": 10,
-    "count": 12,
-    "image": ""
+    "count": 10,
+    "front": "assets/cards/01Naupaka.png"
   },
   {
     "id": "mamaki",
     "name": "Māmaki",
-    "type": "native",
+    "type": "Endemic",
     "points": 5,
-    "count": 12,
-    "image": ""
+    "count": 13,
+    "front": "assets/cards/02Mamaki.png"
   },
   {
     "id": "kupukupu",
     "name": "Kupukupu",
-    "type": "native",
+    "type": "Indigenous",
     "points": 5,
-    "count": 12,
-    "image": ""
+    "count": 13,
+    "front": "assets/cards/08Kupuku.png"
   },
   {
     "id": "ilima",
     "name": "ʻIlima",
-    "type": "native",
+    "type": "Indigenous",
     "points": 20,
-    "count": 8,
-    "image": ""
+    "count": 7,
+    "front": "assets/cards/10Ilima.png"
   },
   {
     "id": "kalo",
     "name": "Kalo",
-    "type": "canoe",
+    "type": "Canoe",
     "points": 20,
-    "count": 10,
-    "image": ""
+    "count": 7,
+    "front": "assets/cards/04Kalo.png"
   },
   {
     "id": "uala",
     "name": "ʻUala",
-    "type": "canoe",
+    "type": "Canoe",
     "points": 10,
     "count": 10,
-    "image": ""
+    "front": "assets/cards/05Uala.png"
   },
   {
     "id": "kukui",
     "name": "Kukui",
-    "type": "canoe",
+    "type": "Canoe",
     "points": 10,
     "count": 10,
-    "image": ""
+    "front": "assets/cards/06Kukui.png"
   },
   {
     "id": "ulu",
     "name": "ʻUlu",
-    "type": "canoe",
+    "type": "Canoe",
     "points": 5,
-    "count": 12,
-    "image": ""
+    "count": 13,
+    "front": "assets/cards/07Ulu.png"
   },
   {
     "id": "niu",
     "name": "Niu",
-    "type": "canoe",
+    "type": "Canoe",
     "points": 5,
-    "count": 12,
-    "image": ""
+    "count": 13,
+    "front": "assets/cards/11Niu.png"
   },
   {
     "id": "waiawi",
     "name": "Waiawī",
     "type": "invasive",
     "points": 0,
-    "count": 10,
-    "image": ""
+    "count": 7,
+    "front": "assets/cards/03Waiawi.png"
   },
   {
     "id": "guineagrass",
@@ -93,7 +93,7 @@
     "type": "invasive",
     "points": 0,
     "count": 10,
-    "image": ""
+    "front": "assets/cards/09Guinea_Grass.png"
   },
   {
     "id": "gorillaogo",
@@ -101,7 +101,7 @@
     "type": "invasive",
     "points": 0,
     "count": 10,
-    "image": ""
+    "front": "assets/cards/12Gorilla_Ogo.png"
   },
   {
     "id": "wai",
@@ -109,7 +109,7 @@
     "type": "resource",
     "points": 0,
     "count": 4,
-    "image": ""
+    "front": "assets/cards/13Wai.png"
   },
   {
     "id": "pakukui",
@@ -117,6 +117,6 @@
     "type": "resource",
     "points": 0,
     "count": 4,
-    "image": ""
+    "front": "assets/cards/14Pakukui.png"
   }
 ]
