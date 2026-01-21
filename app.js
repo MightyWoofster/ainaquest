@@ -129,6 +129,7 @@ function newGame(names){
     tableaus: names.map(() => []),
     invasives: names.map(() => []), // persists across rounds
     roundScores: names.map(() => []), // per round totals
+    huliRevealed: false, // cards face down
   };
 }
 
@@ -240,6 +241,7 @@ function plantSelected(){
     GAME.currentPicker++;
     showGate();
   } else {
+    GAME.huliRevealed = false;   // start with backs
     showHuli();
   }
 }
@@ -248,8 +250,23 @@ function showHuli(){
   showScreen('huli');
   ui.huliGrid.innerHTML = '';
 
+  const isRevealed = !!GAME.huliRevealed;
+
+  // Update button label depending on state
+  ui.btnNextTurn.textContent = isRevealed ? 'Continue' : 'Huli! Reveal';
+
   for(let p=0; p<GAME.names.length; p++){
     const card = GAME.plantedFaceDown[p];
+
+    // If not revealed yet, show the shared card back
+    const imgSrc = isRevealed
+      ? (card.front ?? card.image ?? '')
+      : CARD_BACK;
+
+    const showName = isRevealed ? card.name : 'Face-down card';
+    const showType = isRevealed ? card.type : '—';
+    const showPoints = isRevealed ? Number(card.points ?? 0) : '—';
+
     const box = document.createElement('div');
     box.className = 'revealbox';
 
@@ -259,12 +276,12 @@ function showHuli(){
         <div class="smallpill">Turn ${GAME.turn}</div>
       </div>
       <div style="padding:10px">
-        <div class="cardtile ${cardTypeClass(card)}" style="cursor:default">
-          <div class="cardpoints">${Number(card.points ?? 0)}</div>
-          <img class="cardimg" alt="${card.name}" src="${card.front ?? ''}" onerror="this.style.display='none'">
+        <div class="cardtile ${isRevealed ? cardTypeClass(card) : ''}" style="cursor:default">
+          <div class="cardpoints">${showPoints}</div>
+          <img class="cardimg" alt="${showName}" src="${imgSrc}" onerror="this.style.display='none'">
           <div class="cardmeta">
-            <div class="cardname">${card.name}</div>
-            <div class="cardtype">${card.type}</div>
+            <div class="cardname">${showName}</div>
+            <div class="cardtype">${showType}</div>
           </div>
         </div>
       </div>
@@ -273,8 +290,9 @@ function showHuli(){
     ui.huliGrid.appendChild(box);
   }
 
-  setStatus('Huli! Revealed planted cards. Ready to pass hands.');
+  setStatus(isRevealed ? 'Huli! Revealed planted cards. Ready to pass hands.' : 'Cards are face-down. Press Huli! to reveal.');
 }
+
 
 function rotateHandsLeft(){
   // Pass remaining hands to the next player (left / increasing index)
@@ -433,7 +451,15 @@ function wireUI(){
   ui.btnCancel.addEventListener('click', showGate);
   ui.btnPlant.addEventListener('click', plantSelected);
 
-  ui.btnNextTurn.addEventListener('click', commitTurnAndContinue);
+  ui.btnNextTurn.addEventListener('click', () => {
+   if(!GAME.huliRevealed){
+    GAME.huliRevealed = true;
+    showHuli(); // re-render with fronts
+   } else {
+    commitTurnAndContinue();
+   }
+  });
+   
   ui.btnNextRound.addEventListener('click', startNextRound);
   ui.btnPlayAgain.addEventListener('click', () => {
     renderPlayerInputs();
