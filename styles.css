@@ -135,16 +135,18 @@ input{ width: min(420px, 100%); }
   background: rgba(0,0,0,.22);
   cursor:pointer;
   position:relative;
+
+  aspect-ratio: 2.5 / 3.5; /* playing-card shape */
 }
 .cardtile:hover{ outline: 2px solid rgba(118,183,255,.35); }
 .cardtile.selected{ outline: 3px solid rgba(158,240,195,.50); }
 
 .cardimg{
   width:100%;
-  height:120px;
-  object-fit:cover;
+  height:100%;
+  object-fit:contain;     /* show full PNG */
   display:block;
-  background: rgba(255,255,255,.04);
+  background: rgba(0,0,0,.15);
 }
 .cardmeta{
   padding:10px;
