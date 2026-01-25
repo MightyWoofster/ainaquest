@@ -1,7 +1,6 @@
 /* ʻĀinaQuest Hot-seat MVP
    - Static HTML/CSS/JS (GitHub Pages friendly)
    - Implements: 3 rounds, deal 9, secret choose, Huli reveal, pass hands, basic scoring, invasive penalty
-   - Resource effects + set bonuses: stubbed (add later)
 */
 
 const CARD_BACK = "assets/backs/back.png";
@@ -53,15 +52,18 @@ const ui = {
   decksize: document.getElementById('decksize'),
 };
 
-let CARDS = []; // card definitions (with counts)
+let CARDS = [];
 let GAME = null;
+let selectedInstanceId = null;
+let CARDS_LOADED = false;
 
+// ---------- helpers ----------
 function showScreen(name){
   Object.entries(SCREENS).forEach(([k, el]) => el.classList.toggle('hidden', k !== name));
 }
 
 function setStatus(msg){ ui.status.textContent = msg; }
-function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+
 function shuffle(arr){
   for(let i=arr.length-1; i>0; i--){
     const j = Math.floor(Math.random()*(i+1));
@@ -70,17 +72,32 @@ function shuffle(arr){
   return arr;
 }
 
+function cardTypeClass(card){
+  if(!card) return 'type-native';
+  if(card.type === 'invasive') return 'type-invasive';
+  if(card.type === 'canoe') return 'type-canoe';
+  if(card.type === 'resource') return 'type-resource';
+  return 'type-native';
+}
+
+function makeDefaultNames(n){
+  return Array.from({length:n}, (_,i)=>`Player ${i+1}`);
+}
+
+// ---------- loading ----------
 async function loadCards(){
-  const res = await fetch('./data/cards.json');
+  const res = await fetch('./data/cards.json', { cache: 'no-store' });
+  if(!res.ok) throw new Error(`Failed to load cards.json (${res.status})`);
   const data = await res.json();
+  if(!Array.isArray(data)) throw new Error('cards.json must be an array');
   CARDS = data;
+  CARDS_LOADED = true;
 }
 
 function buildDeck(){
-  // Expand counts into a deck array of card instances
   const deck = [];
   for(const c of CARDS){
-    const count = c.count ?? 1;
+    const count = Number(c.count ?? 1);
     for(let i=0; i<count; i++){
       deck.push({ ...c, instanceId: `${c.id}__${i}` });
     }
@@ -89,12 +106,7 @@ function buildDeck(){
   return deck;
 }
 
-function makeDefaultNames(n){
-  const names = [];
-  for(let i=0; i<n; i++) names.push(`Player ${i+1}`);
-  return names;
-}
-
+// ---------- UI setup ----------
 function renderPlayerInputs(){
   const n = parseInt(ui.playerCount.value, 10);
   const existing = Array.from(ui.playerInputs.querySelectorAll('input')).map(i => i.value);
@@ -114,10 +126,10 @@ function renderPlayerInputs(){
 
 function getPlayerNames(){
   const inputs = Array.from(ui.playerInputs.querySelectorAll('input'));
-  const names = inputs.map(i => i.value.trim()).filter(Boolean);
-  return names;
+  return inputs.map(i => i.value.trim()).filter(Boolean);
 }
 
+// ---------- game state ----------
 function newGame(names){
   const deck = buildDeck();
   ui.decksize.textContent = String(deck.length);
@@ -125,18 +137,15 @@ function newGame(names){
   return {
     names,
     round: 1,
-    turn: 1, // 1..9
-    phase: 'gate', // gate -> choose -> (repeat) -> huli -> gate ...
-    currentPicker: 0, // whose device turn to pick in the current turn
+    turn: 1,                 // 1..9
+    currentPicker: 0,         // who is choosing now
     deck,
     hands: names.map(() => []),
-    // chosen to plant this turn (face-down until Huli)
     plantedFaceDown: names.map(() => null),
-    // planted cards accumulated in current round
     tableaus: names.map(() => []),
-    invasives: names.map(() => []), // persists across rounds
-    roundScores: names.map(() => []), // per round totals
-    huliRevealed: false, // cards face down
+    invasives: names.map(() => []),   // persists across rounds
+    roundScores: names.map(() => [0,0,0]), // store numeric totals per round
+    huliRevealed: false,
   };
 }
 
@@ -144,21 +153,19 @@ function dealRound(){
   const n = GAME.names.length;
   const CARDS_PER_PLAYER = 9;
 
-  // Fresh hands + tableaus for the round
   GAME.hands = GAME.names.map(() => []);
   GAME.tableaus = GAME.names.map(() => []);
   GAME.plantedFaceDown = GAME.names.map(() => null);
 
   const need = n * CARDS_PER_PLAYER;
   if(GAME.deck.length < need){
-    // Rebuild deck if we run out
     GAME.deck = buildDeck();
-    ui.decksize.textContent = String(GAME.deck.length);
   }
 
   for(let p=0; p<n; p++){
     for(let k=0; k<CARDS_PER_PLAYER; k++){
-      GAME.hands[p].push(GAME.deck.pop());
+      const card = GAME.deck.pop();
+      GAME.hands[p].push(card);
     }
   }
   ui.decksize.textContent = String(GAME.deck.length);
@@ -172,6 +179,7 @@ function currentPlayerName(){
   return GAME.names[GAME.currentPicker];
 }
 
+// ---------- screens ----------
 function showGate(){
   showScreen('gate');
   ui.gateTitle.textContent = `Pass to ${currentPlayerName()}`;
@@ -180,17 +188,9 @@ function showGate(){
   setStatus(`Waiting for ${currentPlayerName()} to choose a card.`);
 }
 
-function cardTypeClass(card){
-  if(card.type === 'invasive') return 'type-invasive';
-  if(card.type === 'canoe') return 'type-canoe';
-  if(card.type === 'resource') return 'type-resource';
-  // native / endemic / indigenous
-  return 'type-native';
-}
-
-let selectedInstanceId = null;
-
 function renderHand(){
+  if(!GAME) return;
+
   showScreen('choose');
   ui.uiRound.textContent = String(GAME.round);
   ui.uiTurn.textContent = String(GAME.turn);
@@ -202,17 +202,20 @@ function renderHand(){
   ui.btnPlant.disabled = true;
   ui.hand.innerHTML = '';
 
-  const hand = GAME.hands[GAME.currentPicker];
-
+  const hand = GAME.hands[GAME.currentPicker] || [];
   for(const card of hand){
+    if(!card) continue;
+
     const tile = document.createElement('div');
     tile.className = `cardtile ${cardTypeClass(card)}`;
     tile.dataset.instanceId = card.instanceId;
 
-    const imgSrc = card.front ?? '';
+    // accept either "front" or older "image"
+    const imgSrc = card.front ?? card.image ?? '';
+
     tile.innerHTML = `
       <div class="cardpoints">${Number(card.points ?? 0)}</div>
-      <img class="cardimg" alt="${card.name}" src="${imgSrc}" onerror="this.style.display='none'">
+      <img class="cardimg" alt="${card.name}" src="${imgSrc}">
       <div class="cardmeta">
         <div class="cardname">${card.name}</div>
         <div class="cardtype">${card.type}</div>
@@ -222,7 +225,9 @@ function renderHand(){
     tile.addEventListener('click', () => {
       selectedInstanceId = card.instanceId;
       ui.btnPlant.disabled = false;
-      Array.from(ui.hand.querySelectorAll('.cardtile')).forEach(el => el.classList.toggle('selected', el.dataset.instanceId === selectedInstanceId));
+      Array.from(ui.hand.querySelectorAll('.cardtile')).forEach(el =>
+        el.classList.toggle('selected', el.dataset.instanceId === selectedInstanceId)
+      );
     });
 
     ui.hand.appendChild(tile);
@@ -230,11 +235,11 @@ function renderHand(){
 }
 
 function plantSelected(){
-  if(!selectedInstanceId) return;
-  const p = GAME.currentPicker;
+  if(!GAME || !selectedInstanceId) return;
 
-  const hand = GAME.hands[p];
-  const idx = hand.findIndex(c => c.instanceId === selectedInstanceId);
+  const p = GAME.currentPicker;
+  const hand = GAME.hands[p] || [];
+  const idx = hand.findIndex(c => c && c.instanceId === selectedInstanceId);
   if(idx < 0) return;
 
   const [picked] = hand.splice(idx, 1);
@@ -243,12 +248,11 @@ function plantSelected(){
   setStatus(`${GAME.names[p]} planted a card (face-down).`);
   selectedInstanceId = null;
 
-  // Move to next picker, or Huli if everyone has picked
   if(p < GAME.names.length - 1){
     GAME.currentPicker++;
     showGate();
   } else {
-    GAME.huliRevealed = false;   // start with backs
+    GAME.huliRevealed = false;
     showHuli();
   }
 }
@@ -258,18 +262,13 @@ function showHuli(){
   ui.huliGrid.innerHTML = '';
 
   const isRevealed = !!GAME.huliRevealed;
-
-  // Update button label depending on state
   ui.btnNextTurn.textContent = isRevealed ? 'Continue' : 'Huli! Reveal';
 
   for(let p=0; p<GAME.names.length; p++){
     const card = GAME.plantedFaceDown[p];
+    if(!card) continue;
 
-    // If not revealed yet, show the shared card back
-    const imgSrc = isRevealed
-      ? (card.front ?? card.image ?? '')
-      : CARD_BACK;
-
+    const imgSrc = isRevealed ? (card.front ?? card.image ?? '') : CARD_BACK;
     const showName = isRevealed ? card.name : 'Face-down card';
     const showType = isRevealed ? card.type : '—';
     const showPoints = isRevealed ? Number(card.points ?? 0) : '—';
@@ -285,7 +284,7 @@ function showHuli(){
       <div style="padding:10px">
         <div class="cardtile ${isRevealed ? cardTypeClass(card) : ''}" style="cursor:default">
           <div class="cardpoints">${showPoints}</div>
-          <img class="cardimg" alt="${showName}" src="${imgSrc}" onerror="this.style.display='none'">
+          <img class="cardimg" alt="${showName}" src="${imgSrc}">
           <div class="cardmeta">
             <div class="cardname">${showName}</div>
             <div class="cardtype">${showType}</div>
@@ -297,12 +296,14 @@ function showHuli(){
     ui.huliGrid.appendChild(box);
   }
 
-  setStatus(isRevealed ? 'Huli! Revealed planted cards. Ready to pass hands.' : 'Cards are face-down. Press Huli! to reveal.');
+  setStatus(isRevealed
+    ? 'Huli! Revealed planted cards. Ready to pass hands.'
+    : 'Cards are face-down. Press Huli! to reveal.'
+  );
 }
 
-
+// ---------- turn progression ----------
 function rotateHandsLeft(){
-  // Pass remaining hands to the next player (left / increasing index)
   const n = GAME.names.length;
   const newHands = Array.from({length:n}, () => []);
   for(let p=0; p<n; p++){
@@ -313,25 +314,18 @@ function rotateHandsLeft(){
 }
 
 function commitTurnAndContinue(){
-  // Add planted cards to tableaus, track invasives, then pass hands
+  // add planted to tableaus, track invasives
   for(let p=0; p<GAME.names.length; p++){
     const card = GAME.plantedFaceDown[p];
     if(!card) continue;
 
     GAME.tableaus[p].push(card);
-
-    if(card.type === 'invasive'){
-      GAME.invasives[p].push(card);
-    }
-
-    // Resource effects: stub (implement later)
-    // if(card.type === 'resource') { ... }
+    if(card.type === 'invasive') GAME.invasives[p].push(card);
     GAME.plantedFaceDown[p] = null;
   }
 
   rotateHandsLeft();
 
-  // Next turn or end round
   if(GAME.turn < 9){
     GAME.turn++;
     GAME.currentPicker = 0;
@@ -341,10 +335,12 @@ function commitTurnAndContinue(){
   }
 }
 
+// ---------- scoring ----------
 function computeIconTriplesBonus(tableau){
   const counts = {};
 
   for (const c of tableau) {
+    if (!c) continue;
     if (c.type === "invasive") continue;
     if (c.type === "resource") continue;
     if (!Array.isArray(c.iconColors)) continue;
@@ -373,6 +369,7 @@ function basicRoundScore(p){
   let base = 0;
 
   for (const c of GAME.tableaus[p]) {
+    if (!c) continue;
     if (c.type === "invasive") continue;
     if (c.type === "resource") continue;
     base += Number(c.points ?? 0);
@@ -389,7 +386,6 @@ function basicRoundScore(p){
 }
 
 function endRound(){
-  // Render scoreboard
   showScreen('roundscore');
   ui.roundscore.innerHTML = '';
 
@@ -398,11 +394,9 @@ function endRound(){
     line.className = 'scoreline';
 
     const invCount = GAME.invasives[p].length;
-
-    // compute score breakdown
     const s = basicRoundScore(p);
 
-    // store just the numeric total for this round
+    // store numeric total for this round (0-based round index)
     GAME.roundScores[p][GAME.round - 1] = s.total;
 
     const tripleText = s.triplesByColor && Object.keys(s.triplesByColor).length
@@ -423,7 +417,7 @@ function endRound(){
     ui.roundscore.appendChild(line);
   }
 
-  setStatus(\`Round \${GAME.round} complete.\`);
+  setStatus(`Round ${GAME.round} complete.`);
 }
 
 function startNextRound(){
@@ -446,12 +440,11 @@ function showFinal(){
   const penalized = invCounts.map(c => c === maxInv && maxInv > 0);
 
   for(let p=0; p<n; p++){
-    const sumRounds = GAME.roundScores[p].reduce((a,b)=>a+b,0);
+    const sumRounds = GAME.roundScores[p].reduce((a,b)=>a+Number(b||0), 0);
     const penalty = penalized[p] ? 20 : 0;
     totals.push({ p, sumRounds, penalty, final: sumRounds - penalty, inv: invCounts[p] });
   }
 
-  // Sort by final desc
   totals.sort((a,b) => b.final - a.final);
 
   ui.finalscore.innerHTML = '';
@@ -479,9 +472,15 @@ function resetAll(){
   setStatus('Ready.');
 }
 
+// ---------- events ----------
 function wireUI(){
   ui.playerCount.addEventListener('change', renderPlayerInputs);
+
   ui.btnStart.addEventListener('click', () => {
+    if(!CARDS_LOADED){
+      alert('Cards are still loading—try again in a moment.');
+      return;
+    }
     const names = getPlayerNames();
     const n = parseInt(ui.playerCount.value, 10);
     if(names.length < n){
@@ -500,26 +499,41 @@ function wireUI(){
   ui.btnPlant.addEventListener('click', plantSelected);
 
   ui.btnNextTurn.addEventListener('click', () => {
-   if(!GAME.huliRevealed){
-    GAME.huliRevealed = true;
-    showHuli(); // re-render with fronts
-   } else {
-    commitTurnAndContinue();
-   }
+    if(!GAME) return;
+    if(!GAME.huliRevealed){
+      GAME.huliRevealed = true;
+      showHuli();
+    } else {
+      commitTurnAndContinue();
+    }
   });
-   
+
   ui.btnNextRound.addEventListener('click', startNextRound);
+
   ui.btnPlayAgain.addEventListener('click', () => {
     renderPlayerInputs();
     resetAll();
   });
 }
 
+// ---------- init ----------
 (async function init(){
   renderPlayerInputs();
   wireUI();
-  await loadCards();
-  const deck = buildDeck();
-  ui.decksize.textContent = String(deck.length);
-  setStatus('Loaded cards. Configure players to start.');
+
+  // Prevent “start before cards load”
+  ui.btnStart.disabled = true;
+
+  try{
+    await loadCards();
+    const deck = buildDeck();
+    ui.decksize.textContent = String(deck.length);
+    CARDS_LOADED = true;
+    ui.btnStart.disabled = false;
+    setStatus('Loaded cards. Configure players to start.');
+  } catch(err){
+    console.error(err);
+    setStatus('ERROR: could not load data/cards.json. Check path + JSON validity.');
+    alert('Could not load cards.json. Open Console for details.');
+  }
 })();
