@@ -6,6 +6,13 @@
 
 const CARD_BACK = "assets/backs/back.png";
 
+const WAIWAI_COLOR_BONUS = {
+  blue: 5,
+  orange: 10,
+  green: 15,
+  pink: 20
+};
+
 const SCREENS = {
   setup: document.getElementById('screen-setup'),
   gate: document.getElementById('screen-gate'),
@@ -334,18 +341,51 @@ function commitTurnAndContinue(){
   }
 }
 
-function basicRoundScore(p){
-  // MVP scoring:
-  // - Sum points for non-invasive, non-resource cards
-  // - Invasives are tracked separately for end-game penalty
-  // - Set bonuses not implemented yet
-  let s = 0;
-  for(const c of GAME.tableaus[p]){
-    if(c.type === 'invasive') continue;
-    if(c.type === 'resource') continue;
-    s += Number(c.points ?? 0);
+function computeIconTriplesBonus(tableau){
+  const counts = {};
+
+  for (const c of tableau) {
+    if (c.type === "invasive") continue;
+    if (c.type === "resource") continue;
+    if (!Array.isArray(c.iconColors)) continue;
+
+    // multi-color counts for ALL listed colors
+    for (const col of c.iconColors) {
+      counts[col] = (counts[col] || 0) + 1;
+    }
   }
-  return s;
+
+  let bonus = 0;
+  const triplesByColor = {};
+
+  for (const col in counts) {
+    const triples = Math.floor(counts[col] / 3);
+    if (triples > 0) {
+      triplesByColor[col] = triples;
+      bonus += triples * (WAIWAI_COLOR_BONUS[col] || 0);
+    }
+  }
+
+  return { bonus, triplesByColor, counts };
+}
+
+function basicRoundScore(p){
+  let base = 0;
+
+  for (const c of GAME.tableaus[p]) {
+    if (c.type === "invasive") continue;
+    if (c.type === "resource") continue;
+    base += Number(c.points ?? 0);
+  }
+
+  const icon = computeIconTriplesBonus(GAME.tableaus[p]);
+
+  return {
+    base,
+    iconBonus: icon.bonus,
+    triplesByColor: icon.triplesByColor,
+    total: base + icon.bonus
+  };
 }
 
 function endRound(){
@@ -364,12 +404,24 @@ function endRound(){
     const line = document.createElement('div');
     line.className = 'scoreline';
     const invCount = GAME.invasives[p].length;
+    const s = basicRoundScore(p);
+    GAME.roundScores[p][GAME.round - 1] = s.total;
+
+    const tripleText = Object.keys(s.triplesByColor).length
+      ? Object.entries(s.triplesByColor)
+         .map(([c, t]) => `${c}×${t}`)
+         .join(", ")
+      : "none";
+
 
     line.innerHTML = `
       <b>${GAME.names[p]}</b>
       <div class="kv">
-        <span>Round ${GAME.round}: <b>${GAME.roundScores[p][GAME.round-1]}</b></span>
-        <span>Invasives so far: <b>${invCount}</b></span>
+        <span>Base: <b>${s.base}</b></span>
+        <span>Triples: <b>${tripleText}</b></span>
+        <span>Bonus: <b>${s.iconBonus}</b></span>
+        <span>Round ${GAME.round}: <b>${s.total}</b></span>
+        <span>Invasives: <b>${invCount}</b></span>
       </div>
     `;
     ui.roundscore.appendChild(line);
