@@ -6,6 +6,7 @@
     "points": 20,
     "count": 7,
     "front": "assets/cards/00Ohia.png"
+    "iconColors": ["blue","orange"]  
   },
   {
     "id": "naupaka",
@@ -14,6 +15,7 @@
     "points": 10,
     "count": 10,
     "front": "assets/cards/01Naupaka.png"
+    "iconColors": ["blue","orange"]
   },
   {
     "id": "mamaki",
@@ -22,6 +24,7 @@
     "points": 5,
     "count": 13,
     "front": "assets/cards/02Mamaki.png"
+    "iconColors": ["pink"]
   },
   {
     "id": "kupukupu",
@@ -30,6 +33,7 @@
     "points": 5,
     "count": 13,
     "front": "assets/cards/08Kupukupu.png"
+    "iconColors": ["orange"]
   },
   {
     "id": "ilima",
@@ -38,6 +42,7 @@
     "points": 20,
     "count": 7,
     "front": "assets/cards/10Ilima.png"
+    "iconColors": ["pink","orange"]
   },
   {
     "id": "kalo",
@@ -46,6 +51,7 @@
     "points": 20,
     "count": 7,
     "front": "assets/cards/04Kalo.png"
+    "iconColors": ["blue","green"]
   },
   {
     "id": "uala",
@@ -54,6 +60,7 @@
     "points": 10,
     "count": 10,
     "front": "assets/cards/05Uala.png"
+    "iconColors": ["pink","green"]
   },
   {
     "id": "kukui",
@@ -62,6 +69,7 @@
     "points": 10,
     "count": 10,
     "front": "assets/cards/06Kukui.png"
+    "iconColors": ["pink","orange"]
   },
   {
     "id": "ulu",
@@ -70,6 +78,7 @@
     "points": 5,
     "count": 13,
     "front": "assets/cards/07Ulu.png"
+    "iconColors": ["green"]
   },
   {
     "id": "niu",
@@ -78,6 +87,7 @@
     "points": 5,
     "count": 13,
     "front": "assets/cards/11Niu.png"
+    "iconColors": ["green"]
   },
   {
     "id": "waiawi",
@@ -86,6 +96,7 @@
     "points": 0,
     "count": 7,
     "front": "assets/cards/03Waiawi.png"
+    "iconColors": []
   },
   {
     "id": "guineagrass",
@@ -94,6 +105,7 @@
     "points": 0,
     "count": 10,
     "front": "assets/cards/09Guinea_Grass.png"
+    "iconColors": []
   },
   {
     "id": "gorillaogo",
@@ -102,6 +114,7 @@
     "points": 0,
     "count": 10,
     "front": "assets/cards/12Gorilla_Ogo.png"
+    "iconColors": []
   },
   {
     "id": "wai",
@@ -110,6 +123,7 @@
     "points": 0,
     "count": 4,
     "front": "assets/cards/13Wai.png"
+    "iconColors": []
   },
   {
     "id": "pakukui",
@@ -118,5 +132,6 @@
     "points": 0,
     "count": 4,
     "front": "assets/cards/14Pakukui.png"
+    "iconColors": []
   }
 ]
