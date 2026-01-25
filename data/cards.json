@@ -5,7 +5,7 @@
     "type": "Endemic",
     "points": 20,
     "count": 7,
-    "front": "assets/cards/00Ohia.png"
+    "front": "assets/cards/00Ohia.png",
     "iconColors": ["blue","orange"]  
   },
   {
@@ -14,7 +14,7 @@
     "type": "Endemic",
     "points": 10,
     "count": 10,
-    "front": "assets/cards/01Naupaka.png"
+    "front": "assets/cards/01Naupaka.png",
     "iconColors": ["blue","orange"]
   },
   {
@@ -23,7 +23,7 @@
     "type": "Endemic",
     "points": 5,
     "count": 13,
-    "front": "assets/cards/02Mamaki.png"
+    "front": "assets/cards/02Mamaki.png",
     "iconColors": ["pink"]
   },
   {
@@ -32,7 +32,7 @@
     "type": "Indigenous",
     "points": 5,
     "count": 13,
-    "front": "assets/cards/08Kupukupu.png"
+    "front": "assets/cards/08Kupukupu.png",
     "iconColors": ["orange"]
   },
   {
@@ -41,7 +41,7 @@
     "type": "Indigenous",
     "points": 20,
     "count": 7,
-    "front": "assets/cards/10Ilima.png"
+    "front": "assets/cards/10Ilima.png",
     "iconColors": ["pink","orange"]
   },
   {
@@ -50,7 +50,7 @@
     "type": "Canoe",
     "points": 20,
     "count": 7,
-    "front": "assets/cards/04Kalo.png"
+    "front": "assets/cards/04Kalo.png",
     "iconColors": ["blue","green"]
   },
   {
@@ -59,7 +59,7 @@
     "type": "Canoe",
     "points": 10,
     "count": 10,
-    "front": "assets/cards/05Uala.png"
+    "front": "assets/cards/05Uala.png",
     "iconColors": ["pink","green"]
   },
   {
@@ -68,7 +68,7 @@
     "type": "Canoe",
     "points": 10,
     "count": 10,
-    "front": "assets/cards/06Kukui.png"
+    "front": "assets/cards/06Kukui.png",
     "iconColors": ["pink","orange"]
   },
   {
@@ -77,7 +77,7 @@
     "type": "Canoe",
     "points": 5,
     "count": 13,
-    "front": "assets/cards/07Ulu.png"
+    "front": "assets/cards/07Ulu.png",
     "iconColors": ["green"]
   },
   {
@@ -86,7 +86,7 @@
     "type": "Canoe",
     "points": 5,
     "count": 13,
-    "front": "assets/cards/11Niu.png"
+    "front": "assets/cards/11Niu.png",
     "iconColors": ["green"]
   },
   {
@@ -95,7 +95,7 @@
     "type": "invasive",
     "points": 0,
     "count": 7,
-    "front": "assets/cards/03Waiawi.png"
+    "front": "assets/cards/03Waiawi.png",
     "iconColors": []
   },
   {
@@ -104,7 +104,7 @@
     "type": "invasive",
     "points": 0,
     "count": 10,
-    "front": "assets/cards/09Guinea_Grass.png"
+    "front": "assets/cards/09Guinea_Grass.png",
     "iconColors": []
   },
   {
@@ -113,7 +113,7 @@
     "type": "invasive",
     "points": 0,
     "count": 10,
-    "front": "assets/cards/12Gorilla_Ogo.png"
+    "front": "assets/cards/12Gorilla_Ogo.png",
     "iconColors": []
   },
   {
@@ -122,7 +122,7 @@
     "type": "resource",
     "points": 0,
     "count": 4,
-    "front": "assets/cards/13Wai.png"
+    "front": "assets/cards/13Wai.png",
     "iconColors": []
   },
   {
@@ -131,7 +131,7 @@
     "type": "resource",
     "points": 0,
     "count": 4,
-    "front": "assets/cards/14Pakukui.png"
+    "front": "assets/cards/14Pakukui.png",
     "iconColors": []
   }
 ]
