@@ -389,30 +389,25 @@ function basicRoundScore(p){
 }
 
 function endRound(){
-  // Save round totals
-  const totals = [];
-  for(let p=0; p<GAME.names.length; p++){
-    const total = basicRoundScore(p);
-    GAME.roundScores[p].push(total);
-    totals.push(total);
-  }
-
   // Render scoreboard
   showScreen('roundscore');
   ui.roundscore.innerHTML = '';
+
   for(let p=0; p<GAME.names.length; p++){
     const line = document.createElement('div');
     line.className = 'scoreline';
+
     const invCount = GAME.invasives[p].length;
+
+    // compute score breakdown
     const s = basicRoundScore(p);
+
+    // store just the numeric total for this round
     GAME.roundScores[p][GAME.round - 1] = s.total;
 
-    const tripleText = Object.keys(s.triplesByColor).length
-      ? Object.entries(s.triplesByColor)
-         .map(([c, t]) => `${c}×${t}`)
-         .join(", ")
+    const tripleText = s.triplesByColor && Object.keys(s.triplesByColor).length
+      ? Object.entries(s.triplesByColor).map(([c, t]) => `${c}×${t}`).join(", ")
       : "none";
-
 
     line.innerHTML = `
       <b>${GAME.names[p]}</b>
@@ -424,10 +419,11 @@ function endRound(){
         <span>Invasives: <b>${invCount}</b></span>
       </div>
     `;
+
     ui.roundscore.appendChild(line);
   }
 
-  setStatus(`Round ${GAME.round} complete.`);
+  setStatus(\`Round \${GAME.round} complete.\`);
 }
 
 function startNextRound(){
