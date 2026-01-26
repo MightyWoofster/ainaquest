@@ -227,18 +227,35 @@ input{ width: min(420px, 100%); }
 .cardmeta { display: none; }
 .cardpoints { display: none; }
 
-/* ===== End-of-round card gallery ===== */
+/* ===============================
+   End-of-round card gallery
+   =============================== */
+
+/* Make each scoreline stack vertically */
+.scoreline{
+  display:block;   /* override row/flex layouts */
+}
+
+/* Keep player name + stats on one row */
+.scorehead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+}
+
+/* Card thumbnails grid */
 .thumbgrid{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin-top:10px;
+  margin-top:12px;
 }
 
+/* Individual card thumbnails */
 .thumb{
-  width:72px;
+  width:90px;
   height:auto;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
 }
-
