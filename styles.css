@@ -232,7 +232,7 @@ input{ width: min(420px, 100%); }
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  padding:10px 0 18px;
+  margin-top:10px;
 }
 
 .thumb{
