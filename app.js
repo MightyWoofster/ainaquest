@@ -388,6 +388,22 @@ function basicRoundScore(p){
   };
 }
 
+function renderTableauThumbs(tableau){
+  const wrap = document.createElement('div');
+  wrap.className = 'thumbgrid';
+
+  for (const c of tableau){
+    if(!c) continue;
+    const src = c.front ?? c.image ?? '';
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.alt = c.name ?? 'card';
+    img.src = src || CARD_BACK;
+    wrap.appendChild(img);
+  }
+  return wrap;
+}
+
 function endRound(){
   // Render scoreboard
   showScreen('roundscore');
@@ -421,6 +437,8 @@ function endRound(){
     `;
 
     ui.roundscore.appendChild(line);
+    // show all cards planted this round (tableau)
+    ui.roundscore.appendChild(renderTableauThumbs(GAME.tableaus[p]));
   }
 
   setStatus(\`Round \${GAME.round} complete.\`);
