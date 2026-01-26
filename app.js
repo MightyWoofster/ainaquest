@@ -414,6 +414,8 @@ function endRound(){
     line.className = 'scoreline';
 
     const invCount = GAME.invasives[p].length;
+
+    // compute score breakdown
     const s = basicRoundScore(p);
 
     // store just the numeric total for this round
@@ -423,18 +425,21 @@ function endRound(){
       ? Object.entries(s.triplesByColor).map(([c, t]) => `${c}×${t}`).join(", ")
       : "none";
 
+    // Header row (name + stats)
     line.innerHTML = `
-      <b>${GAME.names[p]}</b>
-      <div class="kv">
-        <span>Base: <b>${s.base}</b></span>
-        <span>Triples: <b>${tripleText}</b></span>
-        <span>Bonus: <b>${s.iconBonus}</b></span>
-        <span>Round ${GAME.round}: <b>${s.total}</b></span>
-        <span>Invasives: <b>${invCount}</b></span>
+      <div class="scorehead">
+        <b>${GAME.names[p]}</b>
+        <div class="kv">
+          <span>Base: <b>${s.base}</b></span>
+          <span>Triples: <b>${tripleText}</b></span>
+          <span>Bonus: <b>${s.iconBonus}</b></span>
+          <span>Round ${GAME.round}: <b>${s.total}</b></span>
+          <span>Invasives: <b>${invCount}</b></span>
+        </div>
       </div>
     `;
 
-    // ✅ show all cards planted this round (tableau)
+    // Gallery of all planted cards this round (tableau)
     line.appendChild(renderTableauThumbs(GAME.tableaus[p]));
 
     ui.roundscore.appendChild(line);
