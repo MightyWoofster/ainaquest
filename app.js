@@ -414,8 +414,6 @@ function endRound(){
     line.className = 'scoreline';
 
     const invCount = GAME.invasives[p].length;
-
-    // compute score breakdown
     const s = basicRoundScore(p);
 
     // store just the numeric total for this round
@@ -436,12 +434,13 @@ function endRound(){
       </div>
     `;
 
+    // ✅ show all cards planted this round (tableau)
+    line.appendChild(renderTableauThumbs(GAME.tableaus[p]));
+
     ui.roundscore.appendChild(line);
-    // show all cards planted this round (tableau)
-    ui.roundscore.appendChild(renderTableauThumbs(GAME.tableaus[p]));
   }
 
-  setStatus(\`Round \${GAME.round} complete.\`);
+  setStatus(`Round ${GAME.round} complete.`);
 }
 
 function startNextRound(){
